@@ -24,17 +24,23 @@ if (typeof Array.prototype.reIndexOf === 'undefined') {
 
 // Dependencies
 require('dotenv').config();
+const fs = require('fs');
 const axios = require('axios');
 const Spotify = require('node-spotify-api');
 
 // Grab credentials for all API services
-const { spotifyCred, omdbCred, bandsintownCred } = require('./keys.js');
+const { spotifyCred, omdbCred } = require('./keys.js');
 
 // Set up the spotify API
 const spotify = new Spotify(spotifyCred);
 
 // Define a function for fetching Spotify data
 function callSpotify(song, num) {
+  // Default song if none provided
+  if (!song) {
+    song = 'Never Gonna Give You Up';
+    num = 1;
+  }
   spotify
     .search({ type: 'track', query: song, limit: num },
       // Handle response
@@ -66,10 +72,15 @@ function callSpotify(song, num) {
 
 // Define a function for fetching OMDB data
 function callOmdb(title) {
+  if (!title) {
+    title = 'Mr. Nobody';
+  }
   axios
     .get(`http://www.omdbapi.com/?apikey=${omdbCred.key}&t=${title}`)
     .then(function (response) {
-      console.log('\nMovie Result(s)\n\n-  *  -  *  -  *  -  *  -\n');
+      console.log('\nFound a movie!\n\n-  *  -  *  -  *  -  *  -\n');
+
+      // console.log(response.data);
 
       // Inform the user if there are no results
       if (response.data.Response === 'False') {
@@ -79,17 +90,27 @@ function callOmdb(title) {
       let { Title, Year, Ratings, Country, Language, Plot, Actors } = response.data;
       // Separately grab the imdb and rottenTomatoes ratings
       let imdbRating = Ratings[0].Value;
-      let rtRating = Ratings[1].Value;
+      let rtRating;
 
-      console.log(`${Title} (${Year}, ${Country}, ${Language})\nActors: ${Actors}\nPlot: ${Plot}\n${imdbRating} (imdb)\n${rtRating} (rottenTomatoes)\n\n-  *  -  *  -  *  -  *  -\n`);
+      // Account for occasional unavailable ratings from RottenTomatoes
+      if (Ratings.length === 1) {
+        rtRating = 'N/A';
+      } else {
+        rtRating = Ratings[1].Value;
+      }
+
+      console.log(`${Title} (${Year}, ${Country}, ${Language})\nActors: ${Actors}\nPlot: ${Plot}\n${imdbRating} (IMDB)\n${rtRating} (rottenTomatoes)\n\n-  *  -  *  -  *  -  *  -\n`);
     })
     .catch(function (err) {
-      console.log(err);
+      console.log(err.response);
     });
 }
 
 // Make a call to the Bandsintown API
 function callBandsintown(artist) {
+  if (!artist) {
+    return console.log('\n\nPlease enter an artist or band.\n\n')
+  }
   axios
     .get(`https://rest.bandsintown.com/artists/${artist}/events?app_id=secret`)
     .then(function (response) {
@@ -110,6 +131,9 @@ function callBandsintown(artist) {
         // Separator
         console.log(`\n-  *  -  *  -  *  -  *  -\n`);
       });
+    })
+    .catch(function (err) {
+      console.log(err.response);
     });
 }
 
@@ -118,10 +142,17 @@ This is ground control, where all the magic happens. Major Tom is still out ther
 */
 
 // Snatch the arguments given by the user
-const command = process.argv[2];
+let command = process.argv[2];
 
 // Add all remaining args to an array, this allows the user to forgo quotes
 let arg = process.argv.slice(3);
+
+// Handle case when command is do-what-it-says
+if (command === 'do-what-it-says') {
+  let result = fs.readFileSync('./random.txt', 'utf8').split(',');
+  command = result[0].toString();
+  arg = result.slice(1);
+}
 
 // Default number of results for spotify api
 let numOfResults = '5';
@@ -152,9 +183,6 @@ switch (command) {
     break;
   case 'movie-this':
     callOmdb(arg);
-    break;
-  case 'do-what-it-says':
-    console.log('Do what it says');
     break;
   default:
     console.log('Command not recognized');

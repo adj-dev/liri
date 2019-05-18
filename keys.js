@@ -7,12 +7,7 @@ const omdbCred = {
   key: process.env.OMDB_KEY
 }
 
-const bandsintownCred = {
-  key: process.env.BANDS_IN_TOWN_KEY
-}
-
 module.exports = {
   spotifyCred,
-  omdbCred,
-  bandsintownCred
+  omdbCred
 };
