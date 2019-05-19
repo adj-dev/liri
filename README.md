@@ -1,6 +1,12 @@
 # LIRI
 Find songs from Spotify, shows from Bands In Town, and movies from OMDB.
 
+## Installation and Getting Started
+1. `git clone https://github.com/adj-dev/liri-node-app.git`
+2. `cd liri-node-app`
+3. `npm install`
+4. `node liri.js`
+
 ## Entering arguments
 When adding any search term the user has the choice of entering an "explicit string", or an implicit string (no quotes). Liri will automatically handle it. If there are no results Liri will let the user know that 0 results were found. 
 
