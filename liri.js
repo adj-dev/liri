@@ -15,7 +15,10 @@ const { help } = require('./modules/help.js');
  * and return the index of the first element which matches the provided
  * regular expression.
  * Note: This will not match on objects.
- * Credit: This is not my intellectual property. http://creativenotice.com/2013/07/regular-expression-in-array-indexof/
+ * Credit: http://creativenotice.com/2013/07/regular-expression-in-array-indexof/
+ * 
+ * What is this used for? I use this custom method for improving the method I use 
+ * for capturing the requested number of results for spotify-this-song commands.
  */
 if (typeof Array.prototype.reIndexOf === 'undefined') {
   /**
