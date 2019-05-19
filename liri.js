@@ -1,3 +1,12 @@
+// Dependencies
+require('dotenv').config();
+const fs = require('fs');
+const { callSpotify } = require('./modules/spotify.js');
+const { callBandsintown } = require('./modules/bandsintown.js');
+const { callOmdb } = require('./modules/omdb.js');
+
+
+
 /**
  * Regular Expression IndexOf for Arrays
  * This little addition to the Array prototype will iterate over an array
@@ -22,130 +31,23 @@ if (typeof Array.prototype.reIndexOf === 'undefined') {
 }
 
 
-// Dependencies
-require('dotenv').config();
-const fs = require('fs');
-const axios = require('axios');
-const Spotify = require('node-spotify-api');
 
-// Grab credentials for all API services
-const { spotifyCred, omdbCred } = require('./keys.js');
+/**
+ * This is ground control, where all the magic happens. Major Tom is still out there somewhere,
+ * hanging out in his tin can. Will he ever leave that tin can?
+ */
 
-// Set up the spotify API
-const spotify = new Spotify(spotifyCred);
 
-// Define a function for fetching Spotify data
-function callSpotify(song, num) {
-  // Default song if none provided
-  if (!song) {
-    song = 'Never Gonna Give You Up';
-    num = 1;
-  }
-  spotify
-    .search({ type: 'track', query: song, limit: num },
-      // Handle response
-      function (err, data) {
-        if (err) {
-          return console.log('Error occurred: ' + err);
-        }
-
-        console.log(`\nTop ${num} results\n\n-  *  -  *  -  *  -  *  -\n`);
-
-        // Inform the user if there are no results
-        if (data.tracks.items.length === 0) {
-          return console.log(`Found 0 results for "${song}"\n`);
-        }
-
-        // Iterate through the results and display info for each song
-        data.tracks.items.forEach(function (item) {
-          /*
-          The following console.log might look ugly, but it was the most straight-forward way I could think of
-          to log the artist info to the console. The last injected variable in the template literal is a 
-          tertiary expression to accomodate for the occasionally unavailable preview url: if the url is 
-          present it will be set to the value of preview_url, otherwise if the url is NOT present it will 
-          evaluate to a string that notifies the user.
-          */
-          console.log(`"${item.name}" by ${item.album.artists[0].name}\nAlbum: ${item.album.name}\nPreview: ${item.preview_url ? item.preview_url : 'preview unavailable'}\n\n-  *  -  *  -  *  -  *  -\n`)
-        });
-      });
-}
-
-// Define a function for fetching OMDB data
-function callOmdb(title) {
-  if (!title) {
-    title = 'Mr. Nobody';
-  }
-  axios
-    .get(`http://www.omdbapi.com/?apikey=${omdbCred.key}&t=${title}`)
-    .then(function (response) {
-      console.log('\nFound a movie!\n\n-  *  -  *  -  *  -  *  -\n');
-
-      // console.log(response.data);
-
-      // Inform the user if there are no results
-      if (response.data.Response === 'False') {
-        return console.log(`Found 0 results for "${title}"\n`);
-      }
-
-      let { Title, Year, Ratings, Country, Language, Plot, Actors } = response.data;
-      // Separately grab the imdb and rottenTomatoes ratings
-      let imdbRating = Ratings[0].Value;
-      let rtRating;
-
-      // Account for occasional unavailable ratings from RottenTomatoes
-      if (Ratings.length === 1) {
-        rtRating = 'N/A';
-      } else {
-        rtRating = Ratings[1].Value;
-      }
-
-      console.log(`${Title} (${Year}, ${Country}, ${Language})\nActors: ${Actors}\nPlot: ${Plot}\n${imdbRating} (IMDB)\n${rtRating} (rottenTomatoes)\n\n-  *  -  *  -  *  -  *  -\n`);
-    })
-    .catch(function (err) {
-      console.log(err.response);
-    });
-}
-
-// Make a call to the Bandsintown API
-function callBandsintown(artist) {
-  if (!artist) {
-    return console.log('\n\nPlease enter an artist or band.\n\n')
-  }
-  axios
-    .get(`https://rest.bandsintown.com/artists/${artist}/events?app_id=secret`)
-    .then(function (response) {
-      // Show how many results were found
-      console.log(`\nFound ${response.data.length} upcoming events for ${artist}\n\n-  *  -  *  -  *  -  *  -\n`);
-
-      // Iterate through each result and display the data
-      response.data.forEach(function (event) {
-        let { name, city, region, country } = event.venue;
-        let { datetime } = event;
-
-        console.log(`Venue: ${name}\nLocation: ${city}, ${region}, ${country}\nWhen: ${datetime}`);
-        // If there are tickets available provide a link
-        if (event.offers.length !== 0) {
-          let { url } = event.offers[0];
-          console.log(`Tickets available here: ${url}`);
-        }
-        // Separator
-        console.log(`\n-  *  -  *  -  *  -  *  -\n`);
-      });
-    })
-    .catch(function (err) {
-      console.log(err.response);
-    });
-}
-
-/*
-This is ground control, where all the magic happens. Major Tom is still out there somewhere.
-*/
 
 // Snatch the arguments given by the user
 let command = process.argv[2];
 
-// Add all remaining args to an array, this allows the user to forgo quotes
+
+
+// Capturing all additional args as an array allows the user to forgo quotes
 let arg = process.argv.slice(3);
+
+
 
 // Handle case when command is do-what-it-says
 if (command === 'do-what-it-says') {
@@ -154,8 +56,12 @@ if (command === 'do-what-it-says') {
   arg = result.slice(1);
 }
 
+
+
 // Default number of results for spotify api
 let numOfResults = '5';
+
+
 
 // If spotify-this-song is recieved, check for user-determined number of results
 let indexOfR = arg.reIndexOf(/r=/g);
@@ -171,8 +77,12 @@ if (command === 'spotify-this-song' && indexOfR !== -1) {
   }
 }
 
+
+
 // API calls will expect a string as an argument
 arg = arg.join(' ');
+
+
 
 switch (command) {
   case 'concert-this':
