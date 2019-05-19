@@ -23,12 +23,15 @@ function callBandsintown(artist) {
         // Convert formate of date
         datetime = moment(datetime, 'YYYY-MM-DDTHH:mm:ss').format('MMM Do, YYYY');
 
+        // Display the data
         console.log(`Venue: ${name}\nLocation: ${city}, ${region}, ${country}\nWhen: ${datetime}`);
+
         // If there are tickets available provide a link
         if (event.offers.length !== 0) {
           let { url } = event.offers[0];
           console.log(`Tickets available here: ${url}`);
         }
+
         // Separator
         console.log(`\n-  *  -  *  -  *  -  *  -\n`);
       });
