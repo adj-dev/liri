@@ -1,9 +1,11 @@
 // Dependencies
 require('dotenv').config();
 const fs = require('fs');
+const inquirer = require('inquirer');
 const { callSpotify } = require('./modules/spotify.js');
 const { callBandsintown } = require('./modules/bandsintown.js');
 const { callOmdb } = require('./modules/omdb.js');
+const { help } = require('./modules/help.js');
 
 
 
@@ -84,6 +86,7 @@ arg = arg.join(' ');
 
 
 
+// Handle commands
 switch (command) {
   case 'concert-this':
     callBandsintown(arg);
@@ -93,6 +96,9 @@ switch (command) {
     break;
   case 'movie-this':
     callOmdb(arg);
+    break;
+  case 'help':
+    help();
     break;
   default:
     console.log('Command not recognized');
