@@ -1,5 +1,6 @@
 // Dependencies
 const axios = require('axios');
+const moment = require('moment');
 
 
 
@@ -18,6 +19,9 @@ function callBandsintown(artist) {
       response.data.forEach(function (event) {
         let { name, city, region, country } = event.venue;
         let { datetime } = event;
+
+        // Convert formate of date
+        datetime = moment(datetime, 'YYYY-MM-DDTHH:mm:ss').format('MMM Do, YYYY');
 
         console.log(`Venue: ${name}\nLocation: ${city}, ${region}, ${country}\nWhen: ${datetime}`);
         // If there are tickets available provide a link
