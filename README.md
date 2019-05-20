@@ -31,12 +31,16 @@ If no song is specified the user will be involuntarily "rick-rolled".
 ### Get information about a movie
 _Formerly known as_ `movie-this`
 
+![movie-gif](resources/liri-movie.gif)
+
 Takes a string that represents the title of a movie. LIRI uses OMDB to find information about the movie.
 
 ### Something incredibly mundane
 _Formerly known as_ `do-what-it-says`
 
 A rather useless feature. LIRI reads a file named random.txt and makes an API call based on the text it finds.
+
+__Notice:__ there is no _GIF_ for this feature because you gotta install and run the application to find out exactly how incredibly mundane it truly is.
 
 ### HELP!
 
