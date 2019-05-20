@@ -5,10 +5,10 @@ Find songs from Spotify, shows from Bands In Town, and movies from OMDB.
 1. `git clone https://github.com/adj-dev/liri-node-app.git`
 2. `cd liri-node-app`
 3. `npm install`
-4. `node liri.js`
+4. `node liri` _or_ `node liri.js`
 
-## Entering arguments
-When adding any search term quotes are not recommended, they could throw off the APIs, though Liri will attempt to handle it. If there are no results Liri will let the user know that 0 results were found. 
+## A quick note on entering arguments
+When adding any search term quotes are not recommended as they could throw off the APIs - though Liri will attempt to handle it. If there are no results Liri will let you know that none found. 
 
 ## Commands
 There are 6 different commands that the user can use.
