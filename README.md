@@ -15,7 +15,9 @@ There are 6 different commands that the user can use.
 
 ### Find upcoming events for an artist/band
 _Formerly known as_ `concert-this`
+
 ![event-gif](resources/liri-events.gif)
+
 Takes a string that represents an artist/band name. LIRI uses the Bandsintown API to return a list of all upcoming events for said artist/band. If it is possible to buy tickets for the event LIRI will provide a link that will take you to where you can purchase them. 
 
 ### Search for a song on Spotify
