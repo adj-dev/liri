@@ -8,7 +8,7 @@ Find songs from Spotify, shows from Bands In Town, and movies from OMDB.
 4. `node liri` _or_ `node liri.js`
 
 ## A quick note on entering arguments
-When adding any search term quotes are not recommended as they could throw off the APIs - though Liri will attempt to handle it. If there are no results Liri will let you know that none found. 
+When adding any search term quotes are not recommended as they could throw off the APIs - though Liri will attempt to handle it. If there are no results Liri will let you know that none were found. 
 
 ## Commands
 There are 6 different commands that the user can use.
