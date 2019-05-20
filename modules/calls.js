@@ -8,6 +8,7 @@ const axios = require('axios');
 const Spotify = require('node-spotify-api');
 const { spotifyCred, omdbCred } = require('../keys.js');
 const spotify = new Spotify(spotifyCred);
+const chalk = require('chalk');
 
 
 
@@ -28,8 +29,14 @@ function callBandsintown(artist, callback) {
     .get(`https://rest.bandsintown.com/artists/${artist}/events?app_id=secret`)
     .then(function (response) {
       // Catch an error when query contains quotes
-      if (response.data == '\n{error=An error occurred while searching.}\n') {
+      if (response.data === '\n{error=An error occurred while searching.}\n') {
         console.log('\nEnter an artist/band name without any quotes or special characters.\n');
+        callback();
+        return;
+      }
+      // Catch an error when query was not found
+      if (response.data === '\n{warn=Not found}\n') {
+        console.log(chalk`\nNo results for {bold ${artist}}\n`);
         callback();
         return;
       }
@@ -40,22 +47,22 @@ function callBandsintown(artist, callback) {
         let { name, city, region, country } = event.venue;
         let { datetime } = event;
 
-        console.log(`Venue: ${name}\nLocation: ${city}, ${region}, ${country}\nWhen: ${datetime}`);
+        console.log(chalk`{bold Venue:} {yellowBright ${name}}\n{bold Location:} ${city}, ${region}, ${country}\n{bold When:} ${datetime}`);
         // If there are tickets available provide a link
         if (event.offers.length !== 0) {
           let { url } = event.offers[0];
-          console.log(`Tickets available here: ${url}`);
+          console.log(chalk`{bold Tickets:} {cyan ${url}}`);
         }
         // Separator
         console.log(`\n-  *  -  *  -  *  -  *  -\n`);
       });
       // Display number of results
-      console.log(`Found ${response.data.length} upcoming events for ${artist}\n`);
+      console.log(chalk`Found {inverse ${response.data.length}} upcoming events for {bold.yellowBright ${artist}}\n`);
       // Run a callback function after data has been logged
       callback();
     })
     .catch(function (err) {
-      console.log(err.response);
+      console.log('\nTry that again...\n');
       callback();
     });
 }
@@ -80,12 +87,12 @@ function callSpotify(song, num, callback) {
     .then(data => {
       // Inform the user if there are no results
       if (data.tracks.items.length === 0) {
-        console.log(`\nFound 0 results for "${song}"\n`);
+        console.log(chalk`\nFound {inverse 0} results for "{bold.yellowBright ${song}}"\n`);
         callback();
         return;
       }
       // Show how many results were found
-      console.log(`\nTop ${num} results\n\n-  *  -  *  -  *  -  *  -\n`);
+      console.log(chalk`\nTop {inverse ${num}} results\n\n-  *  -  *  -  *  -  *  -\n`);
       // Iterate through the results and display info for each song
       data.tracks.items.forEach(function (item) {
         /*
@@ -95,7 +102,7 @@ function callSpotify(song, num, callback) {
         present it will be set to the value of preview_url, otherwise if the url is NOT present it will 
         evaluate to a string that notifies the user.
         */
-        console.log(`"${item.name}" by ${item.album.artists[0].name}\nAlbum: ${item.album.name}\nPreview: ${item.preview_url ? item.preview_url : 'preview unavailable'}\n\n-  *  -  *  -  *  -  *  -\n`)
+        console.log(chalk`"{bold.yellowBright ${item.name}}" by {yellowBright ${item.album.artists[0].name}}\n{bold Album:} ${item.album.name}\n{bold Preview:} {cyan ${item.preview_url ? item.preview_url : 'preview unavailable'}}\n\n-  *  -  *  -  *  -  *  -\n`)
       });
       callback();
     })
@@ -126,7 +133,7 @@ function generateArguments(arg) {
       // If r is out of range then simply remove the r index from the array
     } else {
       // Inform the user that r must be set to a number between 1 and 20
-      console.log('the "r" option must be set equal to a number between 1 and 20.\nThe default of 5 results has been implemented.');
+      console.log(chalk`\n{underline the "r" option must be set equal to a number between 1 and 20.\nThe default of 5 results has been implemented.}`);
       // Remove the out-of-range "r" from the song title
       song.splice(indexOfR, 1);
     }
@@ -158,7 +165,7 @@ function callOmdb(title, callback) {
     .then(function (response) {
       // Inform the user if there are no results
       if (response.data.Response === 'False') {
-        console.log(`\nFound 0 results for "${title}"\n`);
+        console.log(chalk`\nFound {inverse 0} results for "{bold ${title}}"\n`);
         callback();
         return;
       }
@@ -180,7 +187,7 @@ function callOmdb(title, callback) {
       }
 
       // Display info to user
-      console.log(`${Title} (${Year}, ${Country}, ${Language})\nActors: ${Actors}\nPlot: ${Plot}\n${imdbRating} (IMDB)\n${rtRating} (rottenTomatoes)\n\n-  *  -  *  -  *  -  *  -\n`);
+      console.log(chalk`{bold.yellowBright ${Title}} (${Year})\n{bold Produced In:} ${Country}\n{bold Language(s):} ${Language}\n{bold Actors:} ${Actors}\n{bold Plot:} ${Plot}\n{yellowBright ${imdbRating}} (IMDB)\n{yellowBright ${rtRating}} (rottenTomatoes)\n\n-  *  -  *  -  *  -  *  -\n`);
       callback();
     })
     .catch(function (err) {
