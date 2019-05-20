@@ -23,6 +23,8 @@ Takes a string that represents an artist/band name. LIRI uses the Bandsintown AP
 ### Search for a song on Spotify
 _Formerly known as_ `spotify-this-song`
 
+![event-gif](resources/liri-songs.gif)
+
 Takes a string that represents the title of a song. LIRI uses Spotify to return a list of 5 songs related to the given song title. 
 If no song is specified the user will be involuntarily "rick-rolled". 
 
