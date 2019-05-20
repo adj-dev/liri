@@ -4,7 +4,7 @@
   "description": "Find songs from Spotify, shows from Bands In Town, and movies from OMDB",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "liri": "liri.js"
   },
   "repository": {
     "type": "git",
