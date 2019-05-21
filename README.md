@@ -5,7 +5,20 @@ Find songs from Spotify, shows from Bands In Town, and movies from OMDB.
 1. `git clone https://github.com/adj-dev/liri-node-app.git`
 2. `cd liri-node-app`
 3. `npm install`
-4. `node liri` _or_ `node liri.js`
+4. `touch .env` 
+5. Place __credentials__ for Spotify and OMDB inside `.env` using the following syntax:
+    ```
+    SPOTIFY_ID=provided_credential
+    SPOTIFY_SECRET=provided_credential
+    OMDB_KEY=provided_credential
+   ```
+6. `node liri` _or_ `node liri.js`
+
+### Where can I find said credentials?
+
+_Spotify: https://developer.spotify.com/dashboard/login_
+
+_OMDB: http://www.omdbapi.com/_
 
 ## A quick note on entering arguments
 When adding any search term quotes are not recommended as they could throw off the APIs - though Liri will attempt to handle it. If there are no results Liri will let you know that none were found. 
