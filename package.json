@@ -2,7 +2,7 @@
   "name": "liri-node-app",
   "version": "1.0.0",
   "description": "Find songs from Spotify, shows from Bands In Town, and movies from OMDB",
-  "main": "index.js",
+  "main": "liri.js",
   "scripts": {
     "liri": "liri.js"
   },
